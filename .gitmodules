@@ -1,0 +1,3 @@
+[submodule "other/ast"]
+	path = other/ast
+	url = git@github.com:arjangupta/ast.git
