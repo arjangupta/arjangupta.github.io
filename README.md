@@ -1,1 +1,1 @@
-## Formerly the central GitHub Pages repository for arjangupta
+## Main GitHub Pages repository for arjangupta
