@@ -1,3 +1,5 @@
 -------------------
-More coming soon!
+
+For inquiries, please contact me at arjangupta95@gmail.com
+
 -------------------
