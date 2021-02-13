@@ -1,3 +1,4 @@
 title: Arjan Gupta
 description: Software engineer skilled in embedded, web, and mobile development
+exclude: ["CNAME", "README.md"]
 theme: jekyll-theme-cayman
