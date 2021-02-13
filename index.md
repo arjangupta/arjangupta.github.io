@@ -1,5 +1,3 @@
--------------------
+## Contact
 
-For inquiries, please contact me at arjangupta95@gmail.com
-
--------------------
+**Email**: arjangupta95@gmail.com
