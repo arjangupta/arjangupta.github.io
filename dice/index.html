@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11110f">
+  <meta name="description" content="A fast, tactile virtual dice roller by Arjan Gupta.">
+  <title>Dice — Arjan Gupta</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f0e8;
+      --muted: #aaa69d;
+      --paper: #11110f;
+      --panel: rgba(255,255,255,.055);
+      --line: rgba(255,255,255,.11);
+      --accent: #c8ff65;
+      --accent-ink: #15180f;
+      --shadow: 0 28px 80px rgba(0,0,0,.38);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--paper); }
+    body {
+      min-height: 100svh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(200,255,101,.12), transparent 30rem),
+        radial-gradient(circle at 90% 85%, rgba(113,92,255,.13), transparent 32rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, select, input { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 42px; }
+    header { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+    .brand { color: var(--ink); text-decoration: none; font-weight: 750; letter-spacing: -.03em; }
+    .brand span { color: var(--accent); }
+    .sound {
+      display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line);
+      border-radius: 50%; background: var(--panel); cursor: pointer;
+    }
+    .sound:hover { border-color: rgba(200,255,101,.55); }
+    main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(285px, .75fr); gap: 18px; margin-top: 54px; }
+    .stage, .sidebar { border: 1px solid var(--line); border-radius: 30px; background: var(--panel); backdrop-filter: blur(16px); box-shadow: var(--shadow); }
+    .stage { min-height: 650px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(28px, 5vw, 66px); overflow: hidden; position: relative; }
+    .eyebrow { position: absolute; top: 28px; left: 32px; margin: 0; color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    .result { display: grid; place-items: center; width: min(330px, 75vw); aspect-ratio: 1; position: relative; }
+    .result::before { content: ""; position: absolute; inset: 12%; border-radius: 50%; background: var(--accent); opacity: .08; filter: blur(30px); transform: scale(.8); transition: .35s ease; }
+    .number { position: relative; font-size: clamp(8rem, 19vw, 13rem); font-weight: 900; letter-spacing: -.095em; line-height: .8; font-variant-numeric: tabular-nums; text-shadow: 0 12px 60px rgba(0,0,0,.28); }
+    .result.rolling { animation: hop .54s cubic-bezier(.2,.75,.3,1); }
+    .result.rolling .number { animation: scramble .54s ease; }
+    .result.rolling::before { opacity: .22; transform: scale(1.05); }
+    @keyframes hop { 0%,100%{transform:translateY(0) rotate(0)} 40%{transform:translateY(-22px) rotate(-3deg)} 68%{transform:translateY(5px) rotate(2deg)} }
+    @keyframes scramble { 0%{filter:blur(0);transform:scale(1)} 45%{filter:blur(8px);transform:scale(.84)} 100%{filter:blur(0);transform:scale(1)} }
+    .dice-readout { min-height: 1.6em; margin: 15px 0 0; color: var(--muted); text-align: center; font-size: .95rem; }
+    .roll {
+      width: min(350px, 100%); margin-top: 30px; padding: 17px 24px; border: 0; border-radius: 999px;
+      color: var(--accent-ink); background: var(--accent); font-weight: 850; cursor: pointer;
+      box-shadow: 0 8px 28px rgba(200,255,101,.17); transition: transform .18s ease, filter .18s ease;
+    }
+    .roll:hover { filter: brightness(1.06); transform: translateY(-2px); }
+    .roll:active { transform: translateY(1px) scale(.985); }
+    .hint { margin: 13px 0 0; color: #7c7972; font-size: .76rem; }
+    .sidebar { padding: 28px; display: flex; flex-direction: column; }
+    h1 { margin: 0 0 7px; font-size: 1.65rem; letter-spacing: -.045em; }
+    .sub { margin: 0 0 28px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    label { display: block; color: var(--muted); font-size: .72rem; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+    select, input {
+      width: 100%; margin-top: 8px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 13px;
+      color: var(--ink); background: #191917; outline: none;
+    }
+    select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,255,101,.1); }
+    .quick { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0 27px; }
+    .chip { padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: transparent; font-size: .78rem; cursor: pointer; }
+    .chip:hover, .chip.active { color: var(--paper); border-color: var(--accent); background: var(--accent); }
+    .history-head { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; padding-top: 22px; border-top: 1px solid var(--line); }
+    h2 { margin: 0; font-size: .85rem; letter-spacing: .01em; }
+    .clear { padding: 0; border: 0; color: var(--muted); background: transparent; font-size: .76rem; cursor: pointer; }
+    .clear:hover { color: var(--ink); }
+    ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 4px; }
+    li { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 8px; padding: 9px 0; color: var(--muted); font-size: .79rem; border-bottom: 1px solid rgba(255,255,255,.055); }
+    li strong { color: var(--ink); font-size: 1rem; font-variant-numeric: tabular-nums; }
+    .empty { display: block; padding: 17px 0; border: 0; color: #706d67; }
+    footer { margin-top: 18px; color: #77736c; text-align: center; font-size: .72rem; }
+    footer a { color: inherit; }
+    @media (max-width: 800px) {
+      .shell { width: min(100% - 20px, 620px); padding-top: 10px; }
+      main { grid-template-columns: 1fr; margin-top: 24px; }
+      .stage { min-height: 480px; border-radius: 24px; }
+      .sidebar { border-radius: 24px; }
+      .result { width: min(280px, 72vw); }
+      .number { font-size: clamp(7rem, 31vw, 11rem); }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="/" aria-label="Arjan Gupta home">AG<span>.</span></a>
+      <button class="sound" id="sound" type="button" aria-label="Toggle sound" aria-pressed="true" title="Sound on">♪</button>
+    </header>
+    <main>
+      <section class="stage" aria-labelledby="page-title">
+        <p class="eyebrow">Virtual dice</p>
+        <div class="result" id="result" aria-live="polite" aria-atomic="true">
+          <div class="number" id="number">6</div>
+        </div>
+        <p class="dice-readout" id="readout">Ready to roll 1d6</p>
+        <button class="roll" id="roll" type="button">Roll the dice</button>
+        <p class="hint">Tap, press Space, or shake your phone</p>
+      </section>
+      <aside class="sidebar">
+        <h1 id="page-title">Make your roll</h1>
+        <p class="sub">Choose the dice, add a modifier, and leave the rest to chance.</p>
+        <div class="fields">
+          <label>Dice
+            <select id="count" aria-label="Number of dice">
+              <option value="1">1 die</option><option value="2">2 dice</option><option value="3">3 dice</option>
+              <option value="4">4 dice</option><option value="5">5 dice</option><option value="6">6 dice</option>
+              <option value="8">8 dice</option><option value="10">10 dice</option><option value="20">20 dice</option>
+            </select>
+          </label>
+          <label>Sides
+            <select id="sides" aria-label="Sides per die">
+              <option value="4">d4</option><option value="6" selected>d6</option><option value="8">d8</option>
+              <option value="10">d10</option><option value="12">d12</option><option value="20">d20</option>
+              <option value="100">d100</option>
+            </select>
+          </label>
+          <label style="grid-column:1/-1">Modifier
+            <input id="modifier" type="number" value="0" min="-999" max="999" inputmode="numeric" aria-label="Roll modifier">
+          </label>
+        </div>
+        <div class="quick" aria-label="Quick dice selection">
+          <button class="chip" data-sides="4">d4</button><button class="chip active" data-sides="6">d6</button>
+          <button class="chip" data-sides="8">d8</button><button class="chip" data-sides="10">d10</button>
+          <button class="chip" data-sides="12">d12</button><button class="chip" data-sides="20">d20</button>
+          <button class="chip" data-sides="100">d100</button>
+        </div>
+        <div class="history-head"><h2>Recent rolls</h2><button class="clear" id="clear" type="button">Clear</button></div>
+        <ol id="history"><li class="empty">Your rolls will appear here.</li></ol>
+      </aside>
+    </main>
+    <footer>Made by <a href="/">Arjan Gupta</a></footer>
+  </div>
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const number = $('number'), result = $('result'), readout = $('readout'), history = $('history');
+      const count = $('count'), sides = $('sides'), modifier = $('modifier'), soundButton = $('sound');
+      let rolling = false, soundOn = true, rolls = [];
+      try { rolls = JSON.parse(localStorage.getItem('dice-history') || '[]').slice(0, 7); } catch (_) {}
+
+      const notation = () => `${count.value}d${sides.value}${Number(modifier.value) > 0 ? '+' : ''}${Number(modifier.value) || ''}`.replace(/d(\d+)0$/, 'd$1');
+      const rand = (max) => {
+        if (crypto && crypto.getRandomValues) {
+          const limit = Math.floor(0x100000000 / max) * max;
+          const value = new Uint32Array(1);
+          do crypto.getRandomValues(value); while (value[0] >= limit);
+          return value[0] % max + 1;
+        }
+        return Math.floor(Math.random() * max) + 1;
+      };
+      const clickSound = () => {
+        if (!soundOn) return;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator(), gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(130, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(70, ctx.currentTime + .08);
+          gain.gain.setValueAtTime(.055, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .09);
+          osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + .1); osc.onended = () => ctx.close();
+        } catch (_) {}
+      };
+      const renderHistory = () => {
+        history.innerHTML = rolls.length ? rolls.map((r, i) => `<li><span>${i + 1}</span><span>${r.label}</span><strong>${r.total}</strong></li>`).join('') : '<li class="empty">Your rolls will appear here.</li>';
+      };
+      const updateUI = () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.sides === sides.value));
+        if (!rolling) readout.textContent = `Ready to roll ${notation()}`;
+      };
+      const roll = () => {
+        if (rolling) return;
+        rolling = true; result.classList.remove('rolling'); void result.offsetWidth; result.classList.add('rolling'); clickSound();
+        const n = Math.max(1, Number(count.value)), d = Math.max(2, Number(sides.value)), mod = Math.max(-999, Math.min(999, Number(modifier.value) || 0));
+        const values = Array.from({length: n}, () => rand(d)); const total = values.reduce((a,b) => a+b, 0) + mod;
+        let ticks = 0;
+        const scramble = setInterval(() => { number.textContent = rand(Math.max(d, n * d)) + (mod || 0); if (++ticks > 5) clearInterval(scramble); }, 58);
+        setTimeout(() => {
+          clearInterval(scramble); number.textContent = total;
+          const detail = values.join(' + ') + (mod ? ` ${mod > 0 ? '+' : '−'} ${Math.abs(mod)}` : '');
+          readout.textContent = n > 1 || mod ? detail : `You rolled a ${total}`;
+          rolls.unshift({ label: `${n}d${d}${mod ? (mod > 0 ? '+' : '') + mod : ''}`, total }); rolls = rolls.slice(0, 7);
+          try { localStorage.setItem('dice-history', JSON.stringify(rolls)); } catch (_) {}
+          renderHistory(); rolling = false; setTimeout(() => result.classList.remove('rolling'), 50);
+          if (navigator.vibrate) navigator.vibrate(35);
+        }, 520);
+      };
+      $('roll').addEventListener('click', roll);
+      document.addEventListener('keydown', e => { if (e.code === 'Space' && !/INPUT|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); roll(); } });
+      [count, sides, modifier].forEach(el => el.addEventListener('change', updateUI));
+      document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => { sides.value = chip.dataset.sides; updateUI(); }));
+      soundButton.addEventListener('click', () => { soundOn = !soundOn; soundButton.setAttribute('aria-pressed', soundOn); soundButton.textContent = soundOn ? '♪' : '×'; soundButton.title = soundOn ? 'Sound on' : 'Sound off'; });
+      $('clear').addEventListener('click', () => { rolls = []; try { localStorage.removeItem('dice-history'); } catch (_) {} renderHistory(); });
+      let lastShake = 0, last = null;
+      window.addEventListener('devicemotion', e => { const a = e.accelerationIncludingGravity; if (!a) return; const now = Date.now(); if (last) { const delta = Math.abs(a.x-last.x)+Math.abs(a.y-last.y)+Math.abs(a.z-last.z); if (delta > 30 && now-lastShake > 1200) { lastShake = now; roll(); } } last = {x:a.x||0,y:a.y||0,z:a.z||0}; });
+      renderHistory(); updateUI();
+    })();
+  </script>
+</body>
+</html>
