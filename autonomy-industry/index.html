@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A live, reproducible measure of autonomy research activity from 2015 through the current month.">
+  <meta name="theme-color" content="#07110f">
+  <title>How Fast Is the Autonomy Industry Growing? — Arjan Gupta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2307110f'/%3E%3Cpath d='M13 45 25 19h7l12 26h-8l-2-6H23l-2 6Zm13-13h6l-3-8Z' fill='%2368f0ba'/%3E%3Ccircle cx='48' cy='18' r='5' fill='%23e4ff58'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="article.css">
+</head>
+<body>
+  <header class="site-nav">
+    <a class="wordmark" href="/" aria-label="Arjan Gupta, home">AG<span>.</span></a>
+    <a href="/">← Back to arjangupta.com</a>
+  </header>
+
+  <main>
+    <article>
+      <header class="article-head">
+        <p class="kicker">Live research note · Autonomy</p>
+        <h1>How fast is the autonomy industry growing?</h1>
+        <p class="dek">There is no single public odometer for an industry that spans robotaxis, aircraft, mobile robots, mining equipment, warehouses, and defense. So this page uses a narrower metric that is open, reproducible, and updates itself when you visit.</p>
+        <div class="byline"><span>Arjan Gupta</span><span>Updated <time id="access-date">on access</time></span></div>
+      </header>
+
+      <section class="metric-card" aria-labelledby="chart-heading">
+        <div class="metric-copy">
+          <p class="label">THE METRIC</p>
+          <h2 id="chart-heading">Autonomy research output</h2>
+          <p>Annual OpenAlex-indexed works whose searchable text contains <code>“autonomous vehicle”</code> or <code>“autonomous robot”</code>. The current year runs only through this visit’s date.</p>
+        </div>
+        <div class="stat" aria-live="polite"><strong id="growth-value">—</strong><span id="growth-label">loading live data</span></div>
+        <div class="chart-shell">
+          <div id="chart-status" class="chart-status">Fetching the latest OpenAlex index…</div>
+          <svg id="trend-chart" role="img" aria-labelledby="chart-title chart-desc" viewBox="0 0 960 480" preserveAspectRatio="xMidYMid meet">
+            <title id="chart-title">Annual autonomy-related scholarly works since 2015</title>
+            <desc id="chart-desc">A line chart populated live from OpenAlex.</desc>
+          </svg>
+        </div>
+        <div class="chart-footer"><span id="coverage-note">2015–present</span><span>Source: <a id="live-query-link" href="https://openalex.org" target="_blank" rel="noreferrer">OpenAlex live API ↗</a></span></div>
+      </section>
+
+      <section>
+        <h2>Why use publications?</h2>
+        <p>Industry revenue sounds like the obvious answer, but public market-size estimates are usually proprietary, definition-dependent, and updated irregularly. A live webpage cannot responsibly manufacture the missing months between reports.</p>
+        <p>Research output offers a defensible alternative. Autonomy remains a research-intensive field: advances in perception, planning, controls, simulation, verification, human factors, and safety cases flow through technical literature before—and after—they become products. Publication count therefore measures the <em>rate at which the field is producing codified knowledge</em>. It does not measure revenue, profitability, deployments, or safety.</p>
+        <aside><strong>Interpretation:</strong> treat this as an activity proxy. A rising line is evidence that the technical ecosystem is expanding, not proof that every autonomy company or application is commercially healthy.</aside>
+      </section>
+
+      <section>
+        <h2>What the graph actually does</h2>
+        <p>On every visit, the browser takes its current calendar date and asks the OpenAlex Works API for yearly counts from January 1, 2015 through that date. OpenAlex supports full-text search, date filters, and grouping by publication year; its API response is converted directly into the graph above.<sup><a href="#ref-1">1</a></sup> The latest bar is deliberately labeled year-to-date so a partial year is not silently compared with twelve complete months.</p>
+        <p>The query is intentionally short and inspectable:</p>
+        <pre><code>search: "autonomous vehicle" OR "autonomous robot"
+date:   2015-01-01 through [reader's current date]
+group:  publication_year</code></pre>
+        <p>This design means “now” advances automatically with the reader. It also means historical values can move slightly as OpenAlex adds records, merges duplicates, or improves metadata.</p>
+      </section>
+
+      <section>
+        <h2>What this metric includes—and misses</h2>
+        <p>The two phrases capture a broad core of ground-vehicle and robotic autonomy while avoiding the much noisier word <em>autonomous</em> by itself. They will still include academic work with no commercial path. Conversely, they miss relevant papers that use terms such as unmanned aircraft, self-driving trucks, autonomous navigation, embodied AI, or field robotics without either chosen phrase.</p>
+        <p>There are also database effects. OpenAlex is a fully open scholarly index assembled from sources including Crossref, PubMed, repositories, and publisher data.<sup><a href="#ref-2">2</a></sup> Independent assessments find it valuable and unusually broad, while also documenting gaps and inconsistencies in fields such as language and document type.<sup><a href="#ref-3">3</a></sup> Search-term counts should therefore be read as a repeatable sample of the literature, not a census.</p>
+      </section>
+
+      <section>
+        <h2>The larger measurement problem</h2>
+        <p>“Autonomy” is not one conventional industry classification. SAE’s driving-automation taxonomy alone distinguishes six levels for road vehicles,<sup><a href="#ref-4">4</a></sup> while autonomy work in aviation, industrial robotics, agriculture, and defense follows different regulatory and commercial structures. Any single financial total will change dramatically depending on whether it includes advanced driver assistance, sensors, simulation software, conventional industrial automation, or only systems that operate without an onboard human.</p>
+        <p>A fuller dashboard would pair this research signal with several independently refreshed measures: commercial driverless rides, deployed autonomous fleets, regulatory permits, autonomy-focused job postings, venture investment, and revenue disclosed by public companies. Until those inputs are available through stable public interfaces, the literature series is useful precisely because its limits are visible.</p>
+      </section>
+
+      <section class="conclusion">
+        <p class="label">BOTTOM LINE</p>
+        <h2>A transparent proxy beats a precise-looking guess.</h2>
+        <p>The chart does not claim to be the autonomy industry’s balance sheet. It answers a narrower question well: how quickly is the publicly visible knowledge base around autonomous vehicles and robots growing? Because the source, query, cutoff date, and caveats are all exposed, readers can inspect the evidence instead of taking a market forecast on faith.</p>
+      </section>
+
+      <section class="references">
+        <h2>References</h2>
+        <ol>
+          <li id="ref-1"><a href="https://docs.openalex.org/how-to-use-the-api/get-lists-of-entities/group-entities" target="_blank" rel="noreferrer">OpenAlex, “Group entities”</a>, API documentation.</li>
+          <li id="ref-2">Jason Priem, Heather Piwowar, and Richard Orr, <a href="https://doi.org/10.48550/arXiv.2205.01833" target="_blank" rel="noreferrer">“OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts”</a> (2022).</li>
+          <li id="ref-3">Lucía Céspedes et al., <a href="https://doi.org/10.48550/arXiv.2409.10633" target="_blank" rel="noreferrer">“Evaluating the Linguistic Coverage of OpenAlex”</a> (2024).</li>
+          <li id="ref-4"><a href="https://www.nhtsa.gov/document/levels-automation" target="_blank" rel="noreferrer">NHTSA, “Levels of Automation”</a>, based on SAE J3016.</li>
+        </ol>
+      </section>
+    </article>
+  </main>
+
+  <footer>© <span id="year"></span> Arjan Gupta · Data refreshes when this page is opened.</footer>
+  <script src="article.js"></script>
+</body>
+</html>
