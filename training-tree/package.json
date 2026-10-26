@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"test":"node --test logic.test.js","build":"node --check app.js && node --check data.js && node --check logic.js"}}
